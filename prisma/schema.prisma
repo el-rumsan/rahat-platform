@@ -72,7 +72,7 @@ model Beneficiary {
   id             Int            @id @default(autoincrement())
   uuid           String         @unique @default(uuid())
   name           String
-  phone          String?    @unique @default("")
+  phone          String?        @unique @default("")
   dob            DateTime?
   gender         Gender         @default(UNKNOWN)
   walletAddress  Bytes?         @unique
@@ -95,21 +95,35 @@ model Beneficiary {
   @@map(name: "tbl_beneficiaries")
 }
 
+model ProjectType {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isBlockchainBased Boolean @default(false)
+
+  projects Project[]
+
+  @@map(name: "tbl_project_types")
+}
+
 model Project {
-  id              Int      @id @default(autoincrement())
+  id              Int           @id @default(autoincrement())
   name            String
   startDate       DateTime
   endDate         DateTime
-  budget          Int      @default(0)
-  disbursed       Int      @default(0)
+  budget          Int           @default(0)
+  disbursed       Int           @default(0)
   extras          Json?
   location        String?
   projectType     String?
   projectManager  String?
   coverImage      String?
   description     String?
-  contractAddress Bytes?   @unique
-  isApproved      Boolean  @default(false)
+  contractAddress Bytes?        @unique
+  isApproved      Boolean       @default(false)
+  type            ProjectType? @relation(fields: [projectType], references: [name])
+  
 
   owner         User[]        @relation("UserProjects")
   beneficiaries Beneficiary[] @relation("BeneficiaryProjects")
@@ -124,15 +138,15 @@ model Project {
 }
 
 model Vendor {
-  id            Int     @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   name          String
-  walletAddress Bytes?  @unique
-  phone         String? @unique @default("")
+  walletAddress Bytes?    @unique
+  phone         String?   @unique @default("")
   email         String?
   address       Json
-  isApproved    Boolean @default(false)
-  isActive      Boolean @default(false)
-  projects Project[] @relation("ProjectDistributors")
+  isApproved    Boolean   @default(false)
+  isActive      Boolean   @default(false)
+  projects      Project[] @relation("ProjectDistributors")
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

@@ -3,6 +3,21 @@ import { hexStringToBuffer } from '../src/utils/string-format';
 
 const prisma = new PrismaClient();
 
+const projectTypes = [
+  {
+    name: 'Anticipatory Action',
+    isBlockchainBased: true,
+  },
+  {
+    name: 'CVA',
+    isBlockchainBased: true,
+  },
+  {
+    name: 'Campaign',
+    isBlockchainBased: false,
+  },
+];
+
 async function seed() {
   // Create users
   const user1 = await prisma.user.create({
@@ -42,8 +57,16 @@ async function seed() {
     },
   });
 
+  // Create project types
+
+  await prisma.projectTypes.createMany({
+    data: projectTypes,
+  });
+
   console.log({
     user1,
+    user2,
+    user3,
   });
 }
 

@@ -8,16 +8,17 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Prisma } from '@prisma/client';
 import { CreateProjectDto } from './dto/create-project.dto';
+import {
+  ListProjectBeneficiaryDto,
+  ListProjectDto,
+} from './dto/list-project-dto';
 import {
   UpdateProjectCampaignDto,
   UpdateProjectDto,
 } from './dto/update-project.dto';
 import { ProjectService } from './project.service';
-import {
-  ListProjectBeneficiaryDto,
-  ListProjectDto,
-} from './dto/list-project-dto';
 
 @Controller('projects')
 @ApiTags('projects')
@@ -80,5 +81,15 @@ export class ProjectController {
       address,
       beneficiaries,
     );
+  }
+
+  @Post('/type')
+  createProjectType(@Body() type: Prisma.ProjectTypesCreateInput) {
+    return this.projectService.createProjectType(type);
+  }
+
+  @Get('/type')
+  getProjectTypes() {
+    return this.projectService.getProjectTypes();
   }
 }

@@ -129,4 +129,13 @@ export class CreateProjectDto {
   @IsBoolean()
   @IsOptional()
   isApproved?: boolean;
+
+  @ApiProperty({
+    type: 'string',
+    required: true,
+    example: 'Anticipatory Action',
+  })
+  @IsString()
+  @IsNotEmpty()
+  type: string;
 }

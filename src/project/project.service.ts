@@ -18,12 +18,18 @@ export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
   async create(createProjectDto: CreateProjectDto) {
-    const { owner, contractAddress, ...rest } = createProjectDto;
+    const { owner, contractAddress, projectType, ...rest } = createProjectDto;
 
     // contractAddress =
     const created: Project = await this.prisma.project.create({
       data: {
         ...rest,
+
+        type: {
+          connect: {
+            name: projectType,
+          },
+        },
 
         contractAddress: hexStringToBuffer(contractAddress),
         owner: {
@@ -55,6 +61,14 @@ export class ProjectService {
       endDate: true,
       description: true,
       extras: true,
+      projectType: true,
+      projectManager: true,
+      type: {
+        select: {
+          name: true,
+          isBlockchainBased: true,
+        },
+      },
 
       // _count: {
       //   select: {
@@ -103,6 +117,7 @@ export class ProjectService {
       include: {
         _count: {
           select: {
+            // @ts-ignore
             beneficiaries: {
               where: {
                 // deletedAt: null,
@@ -278,5 +293,15 @@ export class ProjectService {
       });
     }
     return 'Disconnected Succesfully';
+  }
+
+  createProjectType(projectType: Prisma.ProjectTypesCreateInput) {
+    return this.prisma.projectTypes.create({ data: projectType });
+  }
+
+  async getProjectTypes() {
+    const projectTypes = await this.prisma.projectTypes.findMany({});
+
+    return projectTypes;
   }
 }
