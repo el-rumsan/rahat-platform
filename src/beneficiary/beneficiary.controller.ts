@@ -7,8 +7,9 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BeneficiaryService } from './beneficiary.service';
 import { CreateBeneficiaryDto } from './dto/create-beneficiary.dto';
 import {
@@ -16,6 +17,8 @@ import {
   ListBeneficiaryTransactionsDto,
 } from './dto/list-beneficiary.dto';
 
+import { AbilitiesGuard, CheckAbilities, JwtGuard } from '@binod7/rumsan-user';
+import { ACTIONS, SUBJECTS } from 'src/common/constants/rs-user';
 import {
   AssignBeneficiaryToProjectDto,
   UpdateBeneficiaryDto,
@@ -24,6 +27,7 @@ import {
 
 @Controller('beneficiaries')
 @ApiTags('beneficiaries')
+@ApiBearerAuth('JWT')
 export class BeneficiaryController {
   constructor(private readonly beneficiaryService: BeneficiaryService) {}
 
@@ -33,6 +37,8 @@ export class BeneficiaryController {
   }
 
   @Get()
+  @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
+  @UseGuards(JwtGuard, AbilitiesGuard)
   findAll(@Query() query: ListBeneficiaryDto) {
     return this.beneficiaryService.findAll(query);
   }

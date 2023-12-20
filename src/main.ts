@@ -37,16 +37,20 @@ async function bootstrap() {
     .setDescription('Rahat Platform')
     .setVersion('0.1')
     .addBearerAuth(
-      {
-        scheme: 'Bearer',
-        bearerFormat: 'Bearer',
-        type: 'apiKey',
-        name: 'rs-access-token',
-        description: 'Enter access token here',
-        in: 'header',
-      },
-      'rs-access-token',
-    ) // This name here is important for matching up with @ApiBearerAuth() in your controller!)
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT',
+    )
+    // .addBearerAuth(
+    //   {
+    //     scheme: 'Bearer',
+    //     bearerFormat: 'Bearer',
+    //     type: 'apiKey',
+    //     name: 'rs-access-token',
+    //     description: 'Enter access token here',
+    //     in: 'header',
+    //   },
+    //   'rs-access-token',
+    // ) // This name here is important for matching up with @ApiBearerAuth() in your controller!)
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

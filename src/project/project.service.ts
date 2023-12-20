@@ -1,8 +1,8 @@
+import { PrismaService } from '@binod7/prisma-db';
 import { Injectable } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import { paginate } from '@utils/paginate';
 import { bufferToHexString, hexStringToBuffer } from '@utils/string-format';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import {
   ListProjectBeneficiaryDto,

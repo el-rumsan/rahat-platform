@@ -1,21 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+import { PrismaDbModule } from '@binod7/prisma-db';
+import { RumsanUserModule } from '@binod7/rumsan-user';
 import { BullModule } from '@nestjs/bull';
-import { PrismaModule } from 'src/prisma/prisma.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
 import { BeneficiaryModule } from './beneficiary/beneficiary.module';
+import { ListenerModule } from './common/listeners/listener.module';
 import { ProjectModule } from './project/project.module';
 import { ReportsModule } from './reports/reports.module';
 import { TransactionsModule } from './transactions/transactions.module';
-import { UsersModule } from './users/users.module';
-import { VendorsModule } from './vendors/vendors.module';
 
 @Module({
   imports: [
-    PrismaModule,
+    PrismaDbModule,
     BullModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -33,11 +32,13 @@ import { VendorsModule } from './vendors/vendors.module';
       }),
       inject: [ConfigService],
     }),
-    UsersModule,
+    ListenerModule,
+    RumsanUserModule,
+    //UsersModule,
+    //AuthModule,
     ProjectModule,
     BeneficiaryModule,
     ReportsModule,
-    AuthModule,
     TransactionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -50,7 +51,7 @@ import { VendorsModule } from './vendors/vendors.module';
       //   },
       // ],
     }),
-    VendorsModule,
+    //VendorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -58,6 +58,12 @@ enum TxStatus {
   ERROR
 }
 
+enum AuthType {
+  EMAIL
+  PHONE
+  WALLET
+}
+
 model AppSettings {
   id        Int      @id @default(autoincrement())
   name      String
@@ -72,7 +78,7 @@ model Beneficiary {
   id             Int            @id @default(autoincrement())
   uuid           String         @unique @default(uuid())
   name           String
-  phone          String?    @unique @default("")
+  phone          String?
   dob            DateTime?
   gender         Gender         @default(UNKNOWN)
   walletAddress  Bytes?         @unique
@@ -124,15 +130,15 @@ model Project {
 }
 
 model Vendor {
-  id            Int     @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   name          String
-  walletAddress Bytes?  @unique
-  phone         String? @unique @default("")
+  walletAddress Bytes?    @unique
+  phone         String?
   email         String?
   address       Json
-  isApproved    Boolean @default(false)
-  isActive      Boolean @default(false)
-  projects Project[] @relation("ProjectDistributors")
+  isApproved    Boolean   @default(false)
+  isActive      Boolean   @default(false)
+  projects      Project[] @relation("ProjectDistributors")
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -160,27 +166,88 @@ model Transaction {
   @@map(name: "tbl_transactions")
 }
 
-model User {
-  id            Int       @id @default(autoincrement())
-  name          String
-  email         String?   @unique
-  walletAddress Bytes     @unique
-  profileImage  String?
-  isApproved    Boolean   @default(false)
-  isActive      Boolean   @default(true)
-  roles         Role[]    @default([USER])
-  projects      Project[] @relation("UserProjects")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
-  lastLoggedIn  DateTime? @default(now())
+// model User {
+//   id            Int       @id @default(autoincrement())
+//   name          String
+//   email         String?   @unique
+//   walletAddress Bytes     @unique
+//   profileImage  String?
+//   isApproved    Boolean   @default(false)
+//   isActive      Boolean   @default(true)
+//   roles         Role[]    @default([USER])
+//   projects      Project[] @relation("UserProjects")
+//   createdAt     DateTime  @default(now())
+//   updatedAt     DateTime  @updatedAt
+//   deletedAt     DateTime?
+//   lastLoggedIn  DateTime? @default(now())
 
-  @@map(name: "tbl_users")
+//   @@map(name: "tbl_users")
+// }
+
+// enum Role {
+//   DONOR
+//   STAKEHOLDER
+//   ADMIN
+//   USER
+// }
+
+// ===================Role Model==================
+model Role {
+  id        Int       @unique @default(autoincrement())
+  name      String    @unique @db.VarChar()
+  isSystem  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+
+  Permission Permission[]
+  User       User[]
+
+  @@map("roles")
 }
 
-enum Role {
-  DONOR
-  STAKEHOLDER
-  ADMIN
-  USER
+// ===================Permission Model==================
+model Permission {
+  id         Int     @unique @default(autoincrement())
+  role       Role    @relation(fields: [roleId], references: [id])
+  roleId     Int     @db.Integer()
+  action     String  @db.VarChar()
+  subject    String  @db.VarChar()
+  inverted   Boolean @default(false)
+  conditions Json?   @db.JsonB()
+  reason     String? @db.Text()
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+
+  @@map("permissions")
+}
+
+// ===================User Model==================
+model User {
+  id           Int       @id @default(autoincrement())
+  lastLoggedIn DateTime?
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  authAddress String   @unique
+  authType    AuthType @default(EMAIL)
+
+  firstName String
+  lastName  String
+
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int  @db.Integer()
+
+  otp String?
+
+  //this project specific fields
+  walletAddress Bytes    @unique
+  profileImage  String?
+  isApproved    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  Project       Project? @relation("UserProjects", fields: [projectId], references: [id])
+  projectId     Int?
+
+  @@map("users")
 }

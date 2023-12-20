@@ -1,21 +1,21 @@
+import { PrismaService } from '@binod7/prisma-db';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { paginate } from '@utils/paginate';
 import { PrismaWriteOperations } from '@utils/prisma/prisma.extensions';
 import {
-  bufferToHexString,
-  hexStringToBuffer,
-  stringifyWithBigInt,
+    bufferToHexString,
+    hexStringToBuffer,
+    stringifyWithBigInt,
 } from '@utils/string-format';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBeneficiaryDto } from './dto/create-beneficiary.dto';
 import {
-  ListBeneficiaryDto,
-  ListBeneficiaryTransactionsDto,
+    ListBeneficiaryDto,
+    ListBeneficiaryTransactionsDto,
 } from './dto/list-beneficiary.dto';
 import {
-  UpdateBeneficiaryDto,
-  UpdateBeneficiaryStatusDto,
+    UpdateBeneficiaryDto,
+    UpdateBeneficiaryStatusDto,
 } from './dto/update-beneficiary.dto';
 
 @Injectable()

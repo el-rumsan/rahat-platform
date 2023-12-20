@@ -1,6 +1,6 @@
+import { PrismaService } from '@binod7/prisma-db';
 import { Injectable } from '@nestjs/common';
 import { hexStringToBuffer } from '@utils/string-format';
-import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ReportsService {
